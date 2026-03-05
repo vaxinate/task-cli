@@ -7,6 +7,7 @@ A simple command-line task management tool backed by SQLite.
 Using [pipx](https://pipx.pypa.io/):
 
 ```bash
+git clone git@github.com:vaxinate/task-cli.git
 cd task-cli
 pipx install .
 ```
