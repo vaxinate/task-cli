@@ -19,7 +19,7 @@ The `task-cli` command will now be available from anywhere.
 ### Create a task
 
 ```bash
-task-cli create "<name>" "<task_spec>" [--assign <agent_name>]
+task-cli create "<name>" "<task_spec>" [--agent <agent_name>]
 ```
 
 Example:
@@ -192,6 +192,21 @@ The database and schema are created automatically on first use.
 | `get <name\|id>` | Get a task by name or ID |
 | `done <name\|id>` | Mark a task as complete |
 | `rm <name\|id>` | Delete a task |
+
+## Project Structure
+
+```
+task-cli/
+├── .gitignore           # Ignores generated files (__pycache__, *.egg-info)
+├── KIMI.md              # Original usage specification
+├── README.md            # This file
+├── pyproject.toml       # Package configuration for pip install
+├── task-cli             # Executable entry point
+└── task_cli/            # Python package
+    ├── __init__.py
+    ├── cli.py           # CLI argument parsing & command handling
+    └── db.py            # Database operations (SQLite)
+```
 
 ## Output Format
 
