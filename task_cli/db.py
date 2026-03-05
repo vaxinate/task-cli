@@ -31,7 +31,7 @@ def init_db() -> None:
                 name TEXT NOT NULL UNIQUE,
                 spec TEXT NOT NULL,
                 agent_name TEXT,
-                done BOOLEAN NOT NULL DEFAULT 0
+                done INTEGER DEFAULT NULL
             )
         """)
         conn.commit()
@@ -72,10 +72,10 @@ def list_tasks(agent_name: Optional[str] = None, limit: Optional[int] = None, of
     try:
         params = []
         if agent_name:
-            where_clause = "WHERE agent_name = ? AND done = 0"
+            where_clause = "WHERE agent_name = ? AND done IS NULL"
             params.append(agent_name)
         else:
-            where_clause = "WHERE done = 0"
+            where_clause = "WHERE done IS NULL"
         
         query = f"SELECT id, created_at, name, spec, agent_name, done FROM tasks {where_clause} ORDER BY created_at ASC"
         
@@ -98,7 +98,7 @@ def pop_task(agent_name: str) -> Optional[dict]:
     conn = get_connection()
     try:
         row = conn.execute(
-            "SELECT id, created_at, name, spec, agent_name, done FROM tasks WHERE agent_name = ? AND done = 0 ORDER BY created_at ASC LIMIT 1",
+            "SELECT id, created_at, name, spec, agent_name, done FROM tasks WHERE agent_name = ? AND done IS NULL ORDER BY created_at ASC LIMIT 1",
             (agent_name,)
         ).fetchone()
         return row_to_dict(row) if row else None
@@ -141,7 +141,7 @@ def mark_done(identifier: str) -> Optional[dict]:
             return None
         
         conn.execute(
-            "UPDATE tasks SET done = 1 WHERE id = ?",
+            "UPDATE tasks SET done = unixepoch() WHERE id = ?",
             (task["id"],)
         )
         conn.commit()

@@ -31,7 +31,7 @@ $ task-cli create schedule-9012 "schedule email 9012" --agent oscar
     "name": "schedule-9012",
     "spec": "schedule email 9012",
     "agent_name": "oscar",
-    "done": false
+    "done": null
   }
 }
 ```
@@ -47,7 +47,7 @@ $ task-cli create schedule-9012 "schedule email 9012"
     "name": "schedule-9012",
     "spec": "schedule email 9012",
     "agent_name": null,
-    "done": false
+    "done": null
   }
 }
 ```
@@ -88,7 +88,7 @@ $ task-cli list --agent tim
       "name": "schedule-2201",
       "spec": "schedule email 2201",
       "agent_name": "tim",
-      "done": false
+      "done": null
     },
     {
       "id": 201,
@@ -96,7 +96,7 @@ $ task-cli list --agent tim
       "name": "schedule-9012",
       "spec": "schedule email 9012",
       "agent_name": "tim",
-      "done": false
+      "done": null
     }
   ]
 }
@@ -121,7 +121,7 @@ $ task-cli pop --agent tim
     "name": "schedule-9012",
     "spec": "schedule email 9012",
     "agent_name": "tim",
-    "done": false
+    "done": null
   }
 }
 ```
@@ -143,7 +143,7 @@ $ task-cli get 201
     "name": "schedule-9012",
     "spec": "schedule email 9012",
     "agent_name": "tim",
-    "done": false
+    "done": null
   }
 }
 ```
@@ -165,7 +165,7 @@ $ task-cli done 201
     "name": "schedule-9012",
     "spec": "schedule email 9012",
     "agent_name": "tim",
-    "done": true
+    "done": 1772671234
   }
 }
 ```
