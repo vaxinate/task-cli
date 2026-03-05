@@ -101,8 +101,8 @@ def main() -> None:
     create_parser.set_defaults(func=cmd_create)
     
     # list command
-    list_parser = subparsers.add_parser("list", help="List tasks for an agent")
-    list_parser.add_argument("--agent", required=True, help="Agent name")
+    list_parser = subparsers.add_parser("list", help="List tasks")
+    list_parser.add_argument("--agent", help="Filter by agent name")
     list_parser.set_defaults(func=cmd_list)
     
     # pop command

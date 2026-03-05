@@ -54,13 +54,13 @@ $ task-cli create schedule-9012 "schedule email 9012"
 }
 ```
 
-### List tasks for an agent
+### List tasks
 
 ```bash
-task-cli list --agent "<agent_name>"
+task-cli list [--agent "<agent_name>"]
 ```
 
-Lists all undone tasks assigned to the agent, ordered by creation time.
+Lists all undone tasks. If `--agent` is specified, only shows tasks for that agent. Tasks are ordered by creation time.
 
 Example:
 ```bash

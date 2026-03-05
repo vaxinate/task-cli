@@ -65,15 +65,20 @@ def create_task(name: str, spec: str, agent_name: Optional[str] = None) -> dict:
         conn.close()
 
 
-def list_tasks(agent_name: str) -> list:
-    """List all undone tasks for an agent."""
+def list_tasks(agent_name: Optional[str] = None) -> list:
+    """List all undone tasks. If agent_name is provided, filter by agent."""
     init_db()
     conn = get_connection()
     try:
-        rows = conn.execute(
-            "SELECT id, created_at, name, spec, agent_name, done FROM tasks WHERE agent_name = ? AND done = 0 ORDER BY created_at ASC",
-            (agent_name,)
-        ).fetchall()
+        if agent_name:
+            rows = conn.execute(
+                "SELECT id, created_at, name, spec, agent_name, done FROM tasks WHERE agent_name = ? AND done = 0 ORDER BY created_at ASC",
+                (agent_name,)
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT id, created_at, name, spec, agent_name, done FROM tasks WHERE done = 0 ORDER BY created_at ASC"
+            ).fetchall()
         return [row_to_dict(row) for row in rows]
     finally:
         conn.close()
