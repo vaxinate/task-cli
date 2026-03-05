@@ -31,7 +31,7 @@ def cmd_create(args: argparse.Namespace) -> None:
 def cmd_list(args: argparse.Namespace) -> None:
     """Handle list command."""
     try:
-        tasks = db.list_tasks(args.agent)
+        tasks = db.list_tasks(args.agent, args.limit, args.offset)
         output_success({"tasks": tasks})
     except Exception as e:
         output_error(str(e))
@@ -103,6 +103,8 @@ def main() -> None:
     # list command
     list_parser = subparsers.add_parser("list", help="List tasks")
     list_parser.add_argument("--agent", help="Filter by agent name")
+    list_parser.add_argument("--limit", type=int, help="Maximum number of tasks to return")
+    list_parser.add_argument("--offset", type=int, help="Number of tasks to skip")
     list_parser.set_defaults(func=cmd_list)
     
     # pop command

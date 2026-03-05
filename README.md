@@ -57,10 +57,26 @@ $ task-cli create schedule-9012 "schedule email 9012"
 ### List tasks
 
 ```bash
-task-cli list [--agent "<agent_name>"]
+task-cli list [--agent "<agent_name>"] [--limit <n>] [--offset <n>]
 ```
 
 Lists all undone tasks. If `--agent` is specified, only shows tasks for that agent. Tasks are ordered by creation time.
+
+**Pagination options:**
+- `--limit <n>` - Maximum number of tasks to return
+- `--offset <n>` - Number of tasks to skip (for pagination)
+
+Example with pagination:
+```bash
+# Get first 10 tasks
+$ task-cli list --limit 10
+
+# Get next 10 tasks
+$ task-cli list --limit 10 --offset 10
+
+# Get first 5 tasks for a specific agent
+$ task-cli list --agent tim --limit 5
+```
 
 Example:
 ```bash
