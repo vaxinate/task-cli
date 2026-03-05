@@ -54,6 +54,7 @@ def cmd_get(args: argparse.Namespace) -> None:
     try:
         task = db.get_task(args.identifier)
         if task:
+            task["comments"] = db.get_comments(task["id"])
             output_success({"task": task})
         else:
             output_error(f"Task not found: {args.identifier}")

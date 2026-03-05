@@ -133,6 +133,8 @@ $ task-cli pop --agent tim
 task-cli get <name|id>
 ```
 
+Returns the task including all comments.
+
 Example:
 ```bash
 $ task-cli get 201
@@ -144,7 +146,16 @@ $ task-cli get 201
     "name": "schedule-9012",
     "spec": "schedule email 9012",
     "agent_name": "tim",
-    "done": null
+    "done": null,
+    "comments": [
+      {
+        "id": 1,
+        "task_id": 201,
+        "created_at": 1772675000,
+        "body": "here's what I did",
+        "agent_name": "tim"
+      }
+    ]
   }
 }
 ```
