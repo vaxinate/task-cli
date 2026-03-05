@@ -1,0 +1,157 @@
+"""Database operations for task-cli."""
+
+import os
+import sqlite3
+from pathlib import Path
+from typing import Optional
+
+
+def get_db_path() -> Path:
+    """Get the path to the SQLite database file."""
+    data_dir = Path.home() / ".task-cli"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir / "tasks.db"
+
+
+def get_connection() -> sqlite3.Connection:
+    """Get a database connection with row factory."""
+    conn = sqlite3.connect(get_db_path())
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def init_db() -> None:
+    """Initialize the database with schema."""
+    conn = get_connection()
+    try:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS tasks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                created_at INTEGER NOT NULL DEFAULT (unixepoch()),
+                name TEXT NOT NULL UNIQUE,
+                spec TEXT NOT NULL,
+                agent_name TEXT,
+                done BOOLEAN NOT NULL DEFAULT 0
+            )
+        """)
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def row_to_dict(row: sqlite3.Row) -> dict:
+    """Convert a sqlite3.Row to a dictionary."""
+    return {key: row[key] for key in row.keys()}
+
+
+def create_task(name: str, spec: str, agent_name: Optional[str] = None) -> dict:
+    """Create a new task."""
+    init_db()
+    conn = get_connection()
+    try:
+        cursor = conn.execute(
+            "INSERT INTO tasks (name, spec, agent_name) VALUES (?, ?, ?)",
+            (name, spec, agent_name)
+        )
+        task_id = cursor.lastrowid
+        conn.commit()
+        
+        row = conn.execute(
+            "SELECT id, created_at, name, spec, agent_name, done FROM tasks WHERE id = ?",
+            (task_id,)
+        ).fetchone()
+        return row_to_dict(row)
+    finally:
+        conn.close()
+
+
+def list_tasks(agent_name: str) -> list:
+    """List all undone tasks for an agent."""
+    init_db()
+    conn = get_connection()
+    try:
+        rows = conn.execute(
+            "SELECT id, created_at, name, spec, agent_name, done FROM tasks WHERE agent_name = ? AND done = 0 ORDER BY created_at ASC",
+            (agent_name,)
+        ).fetchall()
+        return [row_to_dict(row) for row in rows]
+    finally:
+        conn.close()
+
+
+def pop_task(agent_name: str) -> Optional[dict]:
+    """Get the oldest undone task for an agent (does not delete)."""
+    init_db()
+    conn = get_connection()
+    try:
+        row = conn.execute(
+            "SELECT id, created_at, name, spec, agent_name, done FROM tasks WHERE agent_name = ? AND done = 0 ORDER BY created_at ASC LIMIT 1",
+            (agent_name,)
+        ).fetchone()
+        return row_to_dict(row) if row else None
+    finally:
+        conn.close()
+
+
+def get_task(identifier: str) -> Optional[dict]:
+    """Get a task by name or id."""
+    init_db()
+    conn = get_connection()
+    try:
+        # Try by id first
+        if identifier.isdigit():
+            row = conn.execute(
+                "SELECT id, created_at, name, spec, agent_name, done FROM tasks WHERE id = ?",
+                (int(identifier),)
+            ).fetchone()
+            if row:
+                return row_to_dict(row)
+        
+        # Try by name
+        row = conn.execute(
+            "SELECT id, created_at, name, spec, agent_name, done FROM tasks WHERE name = ?",
+            (identifier,)
+        ).fetchone()
+        return row_to_dict(row) if row else None
+    finally:
+        conn.close()
+
+
+def mark_done(identifier: str) -> Optional[dict]:
+    """Mark a task as done."""
+    init_db()
+    conn = get_connection()
+    try:
+        # Find task first
+        task = get_task(identifier)
+        if not task:
+            return None
+        
+        conn.execute(
+            "UPDATE tasks SET done = 1 WHERE id = ?",
+            (task["id"],)
+        )
+        conn.commit()
+        
+        return get_task(str(task["id"]))
+    finally:
+        conn.close()
+
+
+def delete_task(identifier: str) -> Optional[dict]:
+    """Delete a task by name or id."""
+    init_db()
+    conn = get_connection()
+    try:
+        # Find task first
+        task = get_task(identifier)
+        if not task:
+            return None
+        
+        task_id = task["id"]
+        conn.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+        conn.commit()
+        
+        return {"id": task_id}
+    finally:
+        conn.close()
