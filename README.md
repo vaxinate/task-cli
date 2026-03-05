@@ -5,7 +5,8 @@ A simple command-line task management tool backed by SQLite.
 ## Installation
 
 ```bash
-# Clone or navigate to the project directory
+# Clone the repository
+git clone https://github.com/vaxinate/task-cli.git
 cd task-cli
 
 # Install in editable mode
