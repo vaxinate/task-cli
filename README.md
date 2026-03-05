@@ -4,13 +4,11 @@ A simple command-line task management tool backed by SQLite.
 
 ## Installation
 
-```bash
-# Clone the repository
-git clone https://github.com/vaxinate/task-cli.git
-cd task-cli
+Using [pipx](https://pipx.pypa.io/):
 
-# Install in editable mode
-pip install -e .
+```bash
+cd task-cli
+pipx install .
 ```
 
 The `task-cli` command will now be available from anywhere.
