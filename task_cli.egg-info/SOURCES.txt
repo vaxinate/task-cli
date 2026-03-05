@@ -1,9 +1,0 @@
-pyproject.toml
-task_cli/__init__.py
-task_cli/cli.py
-task_cli/db.py
-task_cli.egg-info/PKG-INFO
-task_cli.egg-info/SOURCES.txt
-task_cli.egg-info/dependency_links.txt
-task_cli.egg-info/entry_points.txt
-task_cli.egg-info/top_level.txt
