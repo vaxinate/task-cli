@@ -34,6 +34,16 @@ def init_db() -> None:
                 done INTEGER DEFAULT NULL
             )
         """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS comments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                task_id INTEGER NOT NULL,
+                created_at INTEGER NOT NULL DEFAULT (unixepoch()),
+                body TEXT NOT NULL,
+                agent_name TEXT,
+                FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+            )
+        """)
         conn.commit()
     finally:
         conn.close()
@@ -166,5 +176,40 @@ def delete_task(identifier: str) -> Optional[dict]:
         conn.commit()
         
         return {"id": task_id}
+    finally:
+        conn.close()
+
+
+def add_comment(task_id: int, body: str, agent_name: Optional[str] = None) -> dict:
+    """Add a comment to a task."""
+    init_db()
+    conn = get_connection()
+    try:
+        cursor = conn.execute(
+            "INSERT INTO comments (task_id, body, agent_name) VALUES (?, ?, ?)",
+            (task_id, body, agent_name)
+        )
+        comment_id = cursor.lastrowid
+        conn.commit()
+        
+        row = conn.execute(
+            "SELECT id, task_id, created_at, body, agent_name FROM comments WHERE id = ?",
+            (comment_id,)
+        ).fetchone()
+        return row_to_dict(row)
+    finally:
+        conn.close()
+
+
+def get_comments(task_id: int) -> list:
+    """Get all comments for a task, ordered by creation time."""
+    init_db()
+    conn = get_connection()
+    try:
+        rows = conn.execute(
+            "SELECT id, task_id, created_at, body, agent_name FROM comments WHERE task_id = ? ORDER BY created_at ASC",
+            (task_id,)
+        ).fetchall()
+        return [row_to_dict(row) for row in rows]
     finally:
         conn.close()

@@ -171,6 +171,27 @@ $ task-cli done 201
 }
 ```
 
+### Add a comment to a task
+
+```bash
+task-cli comment <name|id> "<comment_body>" [--agent <agent_name>]
+```
+
+Example:
+```bash
+$ task-cli comment schedule-9012 "here's what I did" --agent tim
+{
+  "success": true,
+  "comment": {
+    "id": 1,
+    "task_id": 201,
+    "created_at": 1772675000,
+    "body": "here's what I did",
+    "agent_name": "tim"
+  }
+}
+```
+
 ### Delete a task
 
 ```bash
@@ -190,7 +211,7 @@ $ task-cli rm 201
 
 ## Data Storage
 
-Tasks are stored in a SQLite database at:
+Tasks and comments are stored in a SQLite database at:
 
 ```
 ~/.task-cli/tasks.db
@@ -207,6 +228,7 @@ The database and schema are created automatically on first use.
 | `pop --agent <agent>` | Get oldest undone task for an agent |
 | `get <name\|id>` | Get a task by name or ID |
 | `done <name\|id>` | Mark a task as complete (sets done timestamp) |
+| `comment <name\|id> "<body>" [--agent <agent>]` | Add a comment to a task |
 | `rm <name\|id>` | Delete a task |
 
 ## Project Structure

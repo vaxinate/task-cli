@@ -73,6 +73,18 @@ def cmd_done(args: argparse.Namespace) -> None:
         output_error(str(e))
 
 
+def cmd_comment(args: argparse.Namespace) -> None:
+    """Handle comment command."""
+    try:
+        task = db.get_task(args.identifier)
+        if not task:
+            output_error(f"Task not found: {args.identifier}")
+        comment = db.add_comment(task["id"], args.body, args.agent)
+        output_success({"comment": comment})
+    except Exception as e:
+        output_error(str(e))
+
+
 def cmd_rm(args: argparse.Namespace) -> None:
     """Handle rm command."""
     try:
@@ -121,6 +133,13 @@ def main() -> None:
     done_parser = subparsers.add_parser("done", help="Mark a task as done")
     done_parser.add_argument("identifier", help="Task name or id")
     done_parser.set_defaults(func=cmd_done)
+    
+    # comment command
+    comment_parser = subparsers.add_parser("comment", help="Add a comment to a task")
+    comment_parser.add_argument("identifier", help="Task name or id")
+    comment_parser.add_argument("body", help="Comment text")
+    comment_parser.add_argument("--agent", help="Agent name")
+    comment_parser.set_defaults(func=cmd_comment)
     
     # rm command
     rm_parser = subparsers.add_parser("rm", help="Delete a task")
