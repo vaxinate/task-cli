@@ -203,10 +203,10 @@ The database and schema are created automatically on first use.
 | Command | Description |
 |---------|-------------|
 | `create <name> <spec> [--agent <agent>]` | Create a new task |
-| `list --agent <agent>` | List undone tasks for an agent |
+| `list [--agent <agent>] [--limit <n>] [--offset <n>]` | List undone tasks |
 | `pop --agent <agent>` | Get oldest undone task for an agent |
 | `get <name\|id>` | Get a task by name or ID |
-| `done <name\|id>` | Mark a task as complete |
+| `done <name\|id>` | Mark a task as complete (sets done timestamp) |
 | `rm <name\|id>` | Delete a task |
 
 ## Project Structure
